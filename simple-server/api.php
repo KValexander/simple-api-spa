@@ -1,8 +1,10 @@
 <?php
 	session_start();
-
+	
 	include "Database.php";
 	include "Route.php";
+	
+	include "response.php";
 	include "routes.php";
 
 	DB::connect();

@@ -4,7 +4,7 @@ class DB {
 	private static $dbhost = "localhost";
 	private static $dbuser = "root";
 	private static $dbpass = "root";
-	private static $dbname = "";
+	private static $dbname = "simple-spa";
 	public static $connect;
 
 	// Connection to base
