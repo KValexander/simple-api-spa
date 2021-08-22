@@ -2,6 +2,7 @@
 	session_start();
 	
 	include "Database.php";
+	include "Request.php";
 	include "Route.php";
 	
 	include "response.php";

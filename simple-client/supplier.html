@@ -1,0 +1,90 @@
+<div class="form">
+	<h2>Добавление поставщика</h2>
+	<p><input type="text" placeholder="Название компании"></p>
+	<p><input type="number" placeholder="ИНН"></p>
+	<p><input type="text" placeholder="Генеральный директор"></p>
+	<p><input type="text" placeholder="Контактный телефон"></p>
+	<p><input type="button" value="Добавить" onclick="supplier_add()"></p>
+</div><br>
+
+<div class="out">
+	<h2>Вывод поставщиков</h2>
+	<div id="suppliers"></div>
+</div><br>
+
+<script>
+	supplier_get_all();
+
+	function supplier_add() {
+		let input = document.querySelectorAll("input");
+		let data = JSON.stringify({
+			"name": input[0].value,
+			"inn": input[1].value,
+			"ceo": input[2].value,
+			"contact_phone": input[3].value
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			supplier_get_all();
+		}, data, "api/supplier/add");
+	}
+
+	function supplier_get() {
+
+	}
+
+	function supplier_get_all() {
+		let out = ``, name = ``;
+		get(data => {
+			data = JSON.parse(data);
+			if(data.data.length == 0) {
+				out = `<p>Поставщики отсутствуют</p>`;
+			} else {
+				out = `
+					<table>
+						<tr>
+							<th>N</th>
+							<th>ID</th>
+							<th>Name</th>
+							<th>INN</th>
+							<th>CEO</th>
+							<th>Contact phone</th>
+							<th>Update</th>
+							<th>Delete</th>
+						</tr>
+				`;
+				data.data.forEach((supplier, i) => {
+					if (supplier.name == "") name = "*Поставщик с пустым названием*";
+					else name = supplier.name;
+					out += `
+						<tr id="tr_${supplier.supplier_id}">
+							<td>${i}</td>
+							<td>${supplier.supplier_id}</td>
+							<td>${name}</td>
+							<td>${supplier.inn}</td>
+							<td>${supplier.ceo}</td>
+							<td>${supplier.contact_phone}</td>
+							<td><a>Изменить</a></td>
+							<td><a onclick="supplier_delete(${supplier.supplier_id})">Удалить</a></td>
+						</tr>
+					`;
+				});
+				out += `</table>`;
+			}
+			document.querySelector("#suppliers").innerHTML = out;
+		}, null, "api/supplier/get_all");
+	}
+
+	function supplier_update() {
+
+	}
+
+	function supplier_delete(id) {
+		get(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			supplier_get_all();
+		}, null, "api/supplier/delete?supplier_id="+id);
+	}
+</script>

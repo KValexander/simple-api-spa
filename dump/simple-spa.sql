@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Авг 21 2021 г., 11:53
+-- Время создания: Авг 22 2021 г., 11:57
 -- Версия сервера: 10.3.22-MariaDB
 -- Версия PHP: 7.3.17
 
@@ -92,7 +92,7 @@ CREATE TABLE `product` (
 CREATE TABLE `supplier` (
   `supplier_id` int(11) NOT NULL,
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `inn` int(11) NOT NULL,
+  `inn` bigint(11) NOT NULL,
   `ceo` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `contact_phone` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -128,6 +128,12 @@ ALTER TABLE `product`
   ADD PRIMARY KEY (`product_id`);
 
 --
+-- Индексы таблицы `supplier`
+--
+ALTER TABLE `supplier`
+  ADD PRIMARY KEY (`supplier_id`);
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -135,7 +141,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT для таблицы `category`
 --
 ALTER TABLE `category`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT для таблицы `client`
@@ -154,6 +160,12 @@ ALTER TABLE `order`
 --
 ALTER TABLE `product`
   MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `supplier`
+--
+ALTER TABLE `supplier`
+  MODIFY `supplier_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
