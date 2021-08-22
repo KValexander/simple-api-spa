@@ -15,7 +15,9 @@
 	category_get_all();
 
 	function category_add() {
-		let data = JSON.stringify({"category": document.querySelector("#category").value});
+		let data = JSON.stringify({
+			"category": document.querySelector("#category").value,
+		});
 		post(data => {
 			data = JSON.parse(data);
 			alert(data.status + " " + data.data);

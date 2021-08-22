@@ -15,13 +15,13 @@ window.onload = function() {
 
 function out_page(page) {
 	if(page == 'clear') return $("#app").html("");
-	$.ajax({
-		url:`simple-client/${page}`,
-		success: data => {
-			if(data.includes("<!DOCTYPE html>")) return;
-			$("#app").html(data);
-		}
-	});
+	xhr.open("GET", `simple-client/${page}`, true);
+	xhr.send();
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState != 4) return;
+		if(xhr.responseText.includes("<!DOCTYPE html>")) return;
+		$("#app").html(xhr.responseText);
+	}
 }
 
 function get(callback, data, url) {
@@ -35,7 +35,6 @@ function get(callback, data, url) {
 
 function post(callback, data, url) {
 	xhr.open("POST", url, true);
-	xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 	xhr.setRequestHeader('Content-Type', 'application/json');
 	xhr.send(data);
 	xhr.onreadystatechange = function() {
