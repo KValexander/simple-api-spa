@@ -29,14 +29,14 @@ class SupplierController {
 	}
 
 	public function update() {
-		$query = sprintf("UPDATE `category` SET `name`='%s', `inn`='%d', `ceo`='%s', `contact_phone`='%s' WHERE `supplier_id`='%s'",
+		$query = sprintf("UPDATE `supplier` SET `name`='%s', `inn`='%d', `ceo`='%s', `contact_phone`='%s' WHERE `supplier_id`='%s'",
 			Request::input("name"),
 			Request::input("inn"),
 			Request::input("ceo"),
 			Request::input("contact_phone"),
 			Request::input("supplier_id")
 		);
-		if(DB::query($query)) return response(200, "Данные успешно обновлены");
+		if(DB::query($query)) return response(200, "Поставщик успешно обновлен");
 		else return response(400, "Ошибка обновления данных: ". DB::$connect->error);
 	}
 

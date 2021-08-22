@@ -30,7 +30,23 @@
 		}, data, "api/supplier/add");
 	}
 
-	function supplier_get() {
+	function supplier_get(id) {
+		let out;
+		get(data => {
+			data = JSON.parse(data);
+			console.log(data);
+			out  = `
+				<td>N</td>
+				<td>N</td>
+				<td><input type="text" placeholder="Название компании" value="${data.data.name}"></td></td>
+				<td><input type="number" placeholder="ИНН" value="${data.data.inn}"></td></td>
+				<td><input type="text" placeholder="Генеральный директор" value="${data.data.ceo}"></td></td>
+				<td><input type="text" placeholder="Контактный телефон" value="${data.data.contact_phone}"></td></td>
+				<td><input type="button" value="Изменить" onclick="supplier_update(${data.data.supplier_id})"></td></td>
+				<td>N</td>
+			`;
+			$("#tr_"+id).html(out);
+		}, null, "api/supplier/get?supplier_id="+id);
 
 	}
 
@@ -65,7 +81,7 @@
 							<td>${supplier.inn}</td>
 							<td>${supplier.ceo}</td>
 							<td>${supplier.contact_phone}</td>
-							<td><a>Изменить</a></td>
+							<td><a onclick="supplier_get(${supplier.supplier_id})">Изменить</a></td>
 							<td><a onclick="supplier_delete(${supplier.supplier_id})">Удалить</a></td>
 						</tr>
 					`;
@@ -76,7 +92,20 @@
 		}, null, "api/supplier/get_all");
 	}
 
-	function supplier_update() {
+	function supplier_update(id) {
+		let input = document.querySelectorAll("#tr_"+id+" input");
+		let data = JSON.stringify({
+			"supplier_id": id,
+			"name": input[0].value,
+			"inn": input[1].value,
+			"ceo": input[2].value,
+			"contact_phone": input[3].value,
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			supplier_get_all();
+		}, data, "api/supplier/update");
 
 	}
 
