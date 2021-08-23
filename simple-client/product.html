@@ -1,9 +1,129 @@
 <div class="form">
 	<h2>Добавление товара</h2>
-	<p>
-	</p>
+	<p><select id="supplier_id">
+		<option disabled selected>Поставщик</option>
+	</select></p>
+	<p><input type="text" placeholder="Название продукта"></p>
+	<p><input type="text" placeholder="Материал"></p>
+	<p><select id="category_id">
+		<option disabled selected>Категория</option>
+	</select></p>
+	<p><input type="number" placeholder="Стоимость"></p>
+	<p><input type="number" placeholder="Количество"></p>
+	<p><input type="button" value="Добавить" onclick="product_add()"></p>
 </div><br>
 
 <div class="out">
 	<h2>Вывод товаров</h2>
+	<div id="products"></div>
 </div><br>
+
+<script>
+	category_out();
+	function category_out() {
+		let out = ``, name = ``;
+		get(data => {
+			data = JSON.parse(data);
+			data.data.forEach(category => {
+				if(category.category == "") name = "*Категория с пустым названием*";
+				else name = category.category;
+				out += `<option value="${category.category_id}">${name}</option>`
+			});
+			$("#category_id").append(out);
+			supplier_out();
+		}, null, "api/category/get_all");
+	}
+	function supplier_out() {
+		let out = ``, name = ``;
+		get(data => {
+			data = JSON.parse(data);
+			data.data.forEach(supplier => {
+				if(supplier.name == "") name = "*Поставщик с пустым названием*";
+				else name = supplier.name;
+				out += `<option value="${supplier.supplier_id}">${name}</option>`
+			});
+			$("#supplier_id").append(out);
+			product_get_all();
+		}, null, "api/supplier/get_all");
+	}
+
+	function product_add() {
+		let input = document.querySelectorAll("input");
+		let data = JSON.stringify({
+			"supplier_id": $("#supplier_id").val(),
+			"name": input[0].value,
+			"material": input[1].value,
+			"category_id": $("#category_id").val(),
+			"cost": input[2].value,
+			"number": input[3].value
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			product_get_all();
+		}, data, "api/product/add");
+	}
+
+	function product_get(id) {
+
+	}
+
+	function product_get_all() {
+		let out = ``, name = ``;
+		get(data => {
+			data = JSON.parse(data);
+			if(data.data.length == 0) {
+				out = `<p>Товары отсутствуют</p>`;
+			} else {
+				out = `
+					<table>
+						<tr>
+							<th>N</th>
+							<th>ID</th>
+							<th>Supplier</th>
+							<th>Name</th>
+							<th>Material</th>
+							<th>Category</th>
+							<th>Cost</th>
+							<th>Number</th>
+							<th>Update</th>
+							<th>Delete</th>
+						</tr>
+				`;
+				data.data.forEach((product, i) => {
+					if (product.name == "") name = "*Товар с пустым названием*";
+					else name = product.name;
+					out += `
+						<tr id="tr_${product.product_id}">
+							<td>${i}</td>
+							<td>${product.product_id}</td>
+							<td>${product.supplier.name}</td>
+							<td>${name}</td>
+							<td>${product.material}</td>
+							<td>${product.category}</td>
+							<td>${product.cost}</td>
+							<td>${product.number}</td>
+							<td><a onclick="product_get(${product.product_id})">Изменить</a></td>
+							<td><a onclick="product_delete(${product.product_id})">Удалить</a></td>
+						</tr>
+					`;
+				});
+				out += `</table>`;
+			}
+			$("#products").html(out);
+		}, null, "api/product/get_all");
+	}
+
+	function product_update(id) {
+
+	}
+
+	function product_delete(id) {
+		get(data => {
+			data = JSON.parse(data);
+			alert(data.data);
+			product_get_all();
+		}, null, "api/product/delete?product_id="+id);
+	}
+
+</script>
