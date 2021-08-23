@@ -52,7 +52,7 @@ class OrderController {
 	}
 
 	public function update() {
-		$query = sprintf("UPDATE `order` SET `product_id`='%s', `client_id`='%d', `count`='%s', `cost`='%s' WHERE `order_id`='%s'",
+		$query = sprintf("UPDATE `order` SET `product_id`='%s', `client_id`='%s', `count`='%s', `cost`='%s' WHERE `order_id`='%s'",
 			Request::input("product_id"),
 			Request::input("client_id"),
 			Request::input("count"),

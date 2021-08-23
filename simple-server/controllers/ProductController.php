@@ -39,7 +39,7 @@ class ProductController {
 	}
 
 	public function update() {
-		$query = sprintf("UPDATE `product` SET `supplier_id`='%s', `name`='%d', `material`='%s', `category_id`='%s', `cost`='%s', `number`='%s' WHERE `product_id`='%s'",
+		$query = sprintf("UPDATE `product` SET `supplier_id`='%s', `name`='%s', `material`='%s', `category_id`='%s', `cost`='%s', `number`='%s' WHERE `product_id`='%s'",
 			Request::input("supplier_id"),
 			Request::input("name"),
 			Request::input("material"),

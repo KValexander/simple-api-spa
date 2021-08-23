@@ -19,8 +19,8 @@
 </div><br>
 
 <script>
-	category_out();
-	function category_out() {
+	category_out("#category_id", "#supplier_id", true);
+	function category_out(elem, elem2, state) {
 		let out = ``, name = ``;
 		get(data => {
 			data = JSON.parse(data);
@@ -29,11 +29,11 @@
 				else name = category.category;
 				out += `<option value="${category.category_id}">${name}</option>`
 			});
-			$("#category_id").append(out);
-			supplier_out();
+			$(elem).append(out);
+			supplier_out(elem2, state);
 		}, null, "api/category/get_all");
 	}
-	function supplier_out() {
+	function supplier_out(elem, state) {
 		let out = ``, name = ``;
 		get(data => {
 			data = JSON.parse(data);
@@ -42,8 +42,8 @@
 				else name = supplier.name;
 				out += `<option value="${supplier.supplier_id}">${name}</option>`
 			});
-			$("#supplier_id").append(out);
-			product_get_all();
+			$(elem).append(out);
+			if(state) product_get_all();
 		}, null, "api/supplier/get_all");
 	}
 
@@ -65,7 +65,26 @@
 	}
 
 	function product_get(id) {
-
+		if(document.querySelector("#tr_"+id+" input") != null) return;
+		let out;
+		get(data => {
+			data = JSON.parse(data);
+			let product = data.data; 
+			out = `
+				<td>N</td>
+				<td>N</td>
+				<td><select id="supplier_id_update"><option value="${product.supplier.supplier_id}" selected>${product.supplier.name}</option></select></td>
+				<td><input type="text" value="${product.name}" placeholder="Название товара"></td>
+				<td><input type="text" value="${product.material}" placeholder="Материал"></td>
+				<td><select id="category_id_update"><option value="${product.category_id}" selected>${product.category}</option></select></td>
+				<td><input type="number" value="${product.cost}" placeholder="Стоимость"></td>
+				<td><input type="number" value="${product.number}" placeholder="Количество"></td>
+				<td><input type="button" value="Изменить" onclick="product_update(${product.product_id})"></td></td>
+				<td>N</td>
+			`;
+			$("#tr_"+id).html(out);
+			category_out("#category_id_update", "#supplier_id_update", false);
+		}, null, "api/product/get?product_id="+id);
 	}
 
 	function product_get_all() {
@@ -115,7 +134,21 @@
 	}
 
 	function product_update(id) {
-
+		let input = document.querySelectorAll("#tr_"+id+" input");
+		let data = JSON.stringify({
+			"supplier_id": $("#supplier_id_update").val(),
+			"name": input[0].value,
+			"material": input[1].value,
+			"category_id": $("#category_id_update").val(),
+			"cost": input[2].value,
+			"number": input[3].value,
+			"product_id": id
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			product_get_all();
+		}, data, "api/product/update");
 	}
 
 	function product_delete(id) {

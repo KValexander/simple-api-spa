@@ -28,7 +28,7 @@ class SupplierController {
 	}
 
 	public function update() {
-		$query = sprintf("UPDATE `supplier` SET `name`='%s', `inn`='%d', `ceo`='%s', `contact_phone`='%s' WHERE `supplier_id`='%s'",
+		$query = sprintf("UPDATE `supplier` SET `name`='%s', `inn`='%s', `ceo`='%s', `contact_phone`='%s' WHERE `supplier_id`='%s'",
 			Request::input("name"),
 			Request::input("inn"),
 			Request::input("ceo"),

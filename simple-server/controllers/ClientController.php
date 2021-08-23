@@ -28,7 +28,7 @@ class ClientController {
 	}
 
 	public function update() {
-		$query = sprintf("UPDATE `client` SET `surname`='%s', `name`='%d', `patronymic`='%s', `email`='%s', `phone`='%s' WHERE `client_id`='%s'",
+		$query = sprintf("UPDATE `client` SET `surname`='%s', `name`='%s', `patronymic`='%s', `email`='%s', `phone`='%s' WHERE `client_id`='%s'",
 			Request::input("surname"),
 			Request::input("name"),
 			Request::input("patronymic"),
