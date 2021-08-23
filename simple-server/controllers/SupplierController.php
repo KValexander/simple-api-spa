@@ -13,11 +13,10 @@ class SupplierController {
 	}
 
 	public function get() {
-		$supplier_id = Request::input("supplier_id");
-		$query = sprintf("SELECT * FROM `supplier` WHERE `supplier_id`='%s'", $supplier_id);
-		$result = DB::query($query);
-		if($result) return response(200, $result->fetch_assoc());
-		else return response(400, "Ошибка получения данных: ". DB::$connect->error);
+		$query = sprintf("SELECT * FROM `supplier` WHERE `supplier_id`='%s'", Request::input("supplier_id"));
+		$data = DB::query($query)->fetch_assoc();
+		if($data === null) return response(404, "Такого поставщика нет");
+		return response(200, $data);
 	}
 
 	public function get_all() {
@@ -41,8 +40,7 @@ class SupplierController {
 	}
 
 	public function delete() {
-		$supplier_id = Request::input("supplier_id");
-		$query = sprintf("DELETE FROM `supplier` WHERE `supplier_id`='%s'", $supplier_id);
+		$query = sprintf("DELETE FROM `supplier` WHERE `supplier_id`='%s'", Request::input("supplier_id"));
 		if(DB::query($query)) return response(200, "Поставщик успешно удален");
 		else return response(400, "Ошибка удаления данных: ". DB::$connect->error);
 	}

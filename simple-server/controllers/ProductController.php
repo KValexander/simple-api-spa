@@ -17,13 +17,11 @@ class ProductController {
 	public function get() {
 		$query = sprintf("SELECT * FROM `product` WHERE `product_id`='%s'", Request::input("product_id"));
 		$product = DB::query($query)->fetch_assoc();
-		if(!$product) return response(400, "Ошибка получения данных". DB::$connect->error);
+		if($product === null) return response(404, "Такого товара нет");
 		$query = sprintf("SELECT * FROM `supplier` WHERE `supplier_id`='%s'", $product["supplier_id"]);
 		$product["supplier"] = DB::query($query)->fetch_assoc();
-		if(!$product["supplier"]) return response(400, "Ошибка получения данных". DB::$connect->error);
 		$query = sprintf("SELECT * FROM `category` WHERE `category_id`='%s'", $product["category_id"]);
-		$product["category"] = DB::query($query)->fetch_assoc();
-		if(!$product["category"]) return response(400, "Ошибка получения данных". DB::$connect->error);
+		$product["category"] = DB::query($query)->fetch_assoc()["category"];
 		return response(200, $product);
 	}
 
@@ -33,17 +31,15 @@ class ProductController {
 		while($row = $result->fetch_assoc()) {
 			$query = sprintf("SELECT * FROM `supplier` WHERE `supplier_id`='%s'", $row["supplier_id"]);
 			$row["supplier"] = DB::query($query)->fetch_assoc();
-			if(!$row["supplier"]) return response(400, "Ошибка получения данных". DB::$connect->error);
 			$query = sprintf("SELECT * FROM `category` WHERE `category_id`='%s'", $row["category_id"]);
-			$row["category"] = DB::query($query)->fetch_assoc();
-			if(!$row["category"]) return response(400, "Ошибка получения данных". DB::$connect->error);
+			$row["category"] = DB::query($query)->fetch_assoc()["category"];
 			array_push($data, $row);
 		}
 		return response(200, $data);
 	}
 
 	public function update() {
-		$query = sprintf("UPDATE `category` SET `supplier_id`='%s', `name`='%d', `material`='%s', `category_id`='%s', `cost`='%s', `number`='%s' WHERE `product_id`='%s'",
+		$query = sprintf("UPDATE `product` SET `supplier_id`='%s', `name`='%d', `material`='%s', `category_id`='%s', `cost`='%s', `number`='%s' WHERE `product_id`='%s'",
 			Request::input("supplier_id"),
 			Request::input("name"),
 			Request::input("material"),

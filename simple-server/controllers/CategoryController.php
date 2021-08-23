@@ -11,9 +11,9 @@ class CategoryController {
 	public function get() {
 		$category_id = Request::input("category_id");
 		$query = sprintf("SELECT * FROM `category` WHERE `category_id`='%s'", $category_id);
-		$result = DB::query($query);
-		if($result) return response(200, $result->fetch_assoc());
-		else return response(400, "Ошибка получения данных: ". DB::$connect->error);
+		$data = DB::query($query)->fetch_assoc();
+		if($data === null) return response(404, "Такой категории нет");
+		else return response(200, $data);
 	}
 
 	public function get_all() {
@@ -25,16 +25,16 @@ class CategoryController {
 	}
 
 	public function update() {
-		$category_id = Request::input("category_id");
-		$category = Request::input("category");
-		$query = sprintf("UPDATE `category` SET `category`='%s' WHERE `category_id`='%s'", $category, $category_id);
+		$query = sprintf("UPDATE `category` SET `category`='%s' WHERE `category_id`='%s'",
+			Request::input("category_id"),
+			Request::input("category")
+		);
 		if(DB::query($query)) return response(200, "Категория успешно обновлена");
 		else return response(400, "Ошибка обновления данных: ". DB::$connect->error);
 	}
 
 	public function delete() {
-		$category_id = Request::input("category_id");
-		$query = sprintf("DELETE FROM `category` WHERE `category_id`='%s'", $category_id);
+		$query = sprintf("DELETE FROM `category` WHERE `category_id`='%s'", Request::input("category_id"));
 		if(DB::query($query)) return response(200, "Категория успешно удалена");
 		else return response(400, "Ошибка удаления данных: ". DB::$connect->error);
 	}
