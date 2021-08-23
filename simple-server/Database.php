@@ -10,6 +10,7 @@ class DB {
 	// Connection to base
 	public static function connect() {
 		self::$connect = null;
+		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 		self::$connect = new mysqli(self::$dbhost, self::$dbuser, self::$dbpass, self::$dbname);
 		self::$connect->set_charset("utf8");
 		if(self::$connect->connect_errno)
