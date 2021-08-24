@@ -1,9 +1,130 @@
 <div class="form">
 	<h2>Добавление клиента</h2>
-	<p>
-	</p>
+	<p><input type="text" placeholder="Фамилия"></p>
+	<p><input type="text" placeholder="Имя"></p>
+	<p><input type="text" placeholder="Отчество"></p>
+	<p><input type="text" placeholder="Email"></p>
+	<p><input type="number" placeholder="Телефон"></p>
+	<p><input type="button" value="Добавить" onclick="client_add()"></p>
 </div><br>
 
 <div class="out">
 	<h2>Вывод клиентов</h2>
+	<div id="clients"></div>
 </div><br>
+
+<script>
+	client_get_all();
+
+	function client_add() {
+		let input = $("input");
+		let data = JSON.stringify({
+			"surname": input[0].value,
+			"name": input[1].value,
+			"patronymic": input[2].value,
+			"email": input[3].value,
+			"phone": input[4].value,
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			client_get_all();
+		}, data, "api/client/add");
+	}
+
+	function client_get(id) {
+		if(document.querySelector("tr input") != null) return;
+		let out = ``;
+		get(data => {
+			data = JSON.parse(data);
+			let client = data.data;
+			out = `
+				<td>N</td>
+				<td>${client.client_id}</td>
+				<td><input type="text" placeholder="Фамилия" value="${client.surname}"></td>
+				<td><input type="text" placeholder="Имя" value="${client.name}"></td>
+				<td><input type="text" placeholder="Отчество" value="${client.patronymic}"></td>
+				<td><input type="text" placeholder="Email" value="${client.email}"></td>
+				<td><input type="number" placeholder="Телефон" value="${client.phone}"></td>
+				<td><input type="button" value="Изменить" onclick="client_update(${client.client_id})"></td>
+				<td><a onclick="client_delete(${client.client_id})">Удалить</a></td>
+			`;
+			$("#tr_"+id).html(out);
+		}, null, "api/client/get?client_id="+id);
+	}
+
+	function client_get_all() {
+		let out = `
+			<table>
+				<tr>
+					<th>N</th>
+					<th>ID</th>
+					<th>Surname</th>
+					<th>Name</th>
+					<th>Patronymic</th>
+					<th>Email</th>
+					<th>Phone</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+		`, surname = ``, name = ``, patronymic = ``, email = ``, phone = ``;
+		get(data => {
+			data = JSON.parse(data);
+			if(data.data.length == 0) out = `<p>Клиенты отсутствуют</p>`;
+			else {
+				data.data.forEach((client, i) => {
+					surname = client.surname;
+					if(surname == "") surname = "*Фамилия отсутствует*";
+					name = client.name;
+					if(name == "") name = "*Имя отсутствует*";
+					patronymic = client.patronymic;
+					if(patronymic == "") patronymic = "*Отчество отсутствует*";
+					email = client.email;
+					if(email == "") email = "*Email отсутствует*";
+					phone = client.phone;
+					if(phone == "") phone = "*Телефон отсутствует*";
+					out += `
+						<tr id="tr_${client.client_id}">
+							<td>${i}</td>
+							<td>${client.client_id}</td>
+							<td>${surname}</td>
+							<td>${name}</td>
+							<td>${patronymic}</td>
+							<td>${email}</td>
+							<td>${phone}</td>
+							<td><a onclick="client_get(${client.client_id})">Изменить</a></td>
+							<td><a onclick="client_delete(${client.client_id})">Удалить</a></td>
+						</tr>
+					`;
+				});
+			}
+			out += `</table>`;
+			$("#clients").html(out);
+		}, null, "api/client/get_all");
+	}
+
+	function client_update(id) {
+		let input = $("#tr_"+id+" input");
+		let data = JSON.stringify({
+			"surname": input[0].value,
+			"name": input[1].value,
+			"patronymic": input[2].value,
+			"email": input[3].value,
+			"phone": input[4].value,
+			"client_id": id,
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			client_get_all();
+		}, data, "api/client/update");
+	}
+
+	function client_delete(id) {
+		get(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			client_get_all();
+		}, null, "api/client/delete?client_id="+id);
+	}
+</script>

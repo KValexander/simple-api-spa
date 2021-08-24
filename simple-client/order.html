@@ -1,9 +1,149 @@
 <div class="form">
 	<h2>Добавление заказа</h2>
-	<p>
-	</p>
+	<p><select id="product_id">
+		<option disabled selected>Товары</option>
+	</select></p>
+	<p><select id="client_id">
+		<option disabled selected>Клиенты</option>
+	</select></p>
+	<p><input type="number" placeholder="Количество"></p>
+	<p><input type="button" value="Добавить" onclick="order_add()"></p>
 </div><br>
 
 <div class="out">
 	<h2>Вывод заказов</h2>
+	<div id="orders"></div>
 </div><br>
+
+<script>
+	directory_out("#product_id", "#client_id", true);
+
+	function directory_out(elem, elem2, state) {
+		let out = ``, name = ``;
+		get(data => {
+			data = JSON.parse(data);
+			data.data.forEach(product => {
+				name = product.name;
+				if(name == "") name = "*Товар с пустым названием*";
+				out += `<option value="${product.product_id}">${name}</option>`;
+			});
+			$(elem).append(out);
+			out = ``; name = ``;
+			get(data => {
+				data = JSON.parse(data);
+				data.data.forEach(client => {
+					name = client.surname + " " + client.name + " " + client.patronymic;
+					if(name == "") name = "*ФИО с пустым названием*";
+					out += `<option value="${client.client_id}">${name}</option>`;
+				});
+				$(elem2).append(out);
+				if(state) order_get_all();
+			}, null, "api/client/get_all");
+		}, null, "api/product/get_all");
+	}
+
+	function order_add() {
+		let data = JSON.stringify({
+			"product_id": $("#product_id").val(),
+			"client_id": $("#client_id").val(),
+			"count": $("input[type=number]").val()
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			order_get_all();
+		}, data, "api/order/add");
+	}
+
+	function order_get(id) {
+		if(document.querySelector("tr input") != null) return;
+		let out = ``;
+		get(data => {
+			data = JSON.parse(data);
+			let order = data.data;
+			out = `
+				<td>N</td>
+				<td>${order.order_id}</td>
+				<td><select id="product_id_update">
+					<option value="${order.product.product_id}">${order.product.name}</option>
+				</select></td>
+				<td><select id="client_id_update">
+					<option value="${order.client.client_id}">${order.client.name + " " + order.client.surname + " " + order.client.patronymic}</option>
+				</select></td>
+				<td><input type="number" placeholder="Количество" value="${order.count}"></td></td>
+				<td>${order.cost}</td>
+				<td><input type="button" value="Изменить" onclick="order_update(${order.order_id})"></td>
+				<td><a onclick="order_delete(${order.order_id})">Удалить</a></td>
+			`;
+			$("#tr_"+id).html(out);
+			directory_out("#product_id_update", "#client_id_update", false);
+		}, null, "api/order/get?order_id="+id);
+
+	}
+
+	function order_get_all() {
+		let out = ``, product = ``, client = ``;
+		get(data => {
+			data = JSON.parse(data);
+			out = `
+				<table>
+					<tr>
+						<th>N</th>
+						<th>ID</th>
+						<th>Product</th>
+						<th>Client</th>
+						<th>Count</th>
+						<th>Cost</th>
+						<th>Update</th>
+						<th>Delete</th>
+					</tr>
+			`;
+			if(data.data.length == 0) out = `<p>Заказы отсутствуют</p>`;
+			else {
+				data.data.forEach((order, i) => {
+					product = order.product.name;
+					if(product == "") product = "*Товар с пустым названием*";
+					client = order.client.surname + " " + order.client.name + " " + order.client.patronymic;
+					if(client == "") client = "*ФИО с пустым названием*";
+					out += `
+						<tr id="tr_${order.order_id}">
+							<td>${i}</td>
+							<td>${order.order_id}</td>
+							<td>${product}</td>
+							<td>${client}</td>
+							<td>${order.count}</td>
+							<td>${order.cost}</td>
+							<td><a onclick="order_get(${order.order_id})">Изменить</a></td>
+							<td><a onclick="order_delete(${order.order_id})">Удалить</a></td>
+						</tr>
+					`;
+					out += `</table>`;
+					$("#orders").html(out);
+				});
+			}
+			$("#orders").html(out);
+		}, null, "api/order/get_all");
+	}
+
+	function order_update(id) {
+		let data = JSON.stringify({
+			"product_id": $("#product_id_update").val(),
+			"client_id": $("#client_id_update").val(),
+			"count": $("#tr_"+id+" input[type=number]").val(),
+			"order_id": id,
+		});
+		post(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			order_get_all();
+		}, data, "api/order/update");
+	}
+
+	function order_delete(id) {
+		get(data => {
+			data = JSON.parse(data);
+			alert(data.status + " " + data.data);
+			order_get_all();
+		}, null, "api/order/delete?order_id="+id);
+	}
+</script>

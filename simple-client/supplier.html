@@ -31,19 +31,19 @@
 	}
 
 	function supplier_get(id) {
-		if(document.querySelector("#tr_"+id+" input") != null) return;
+		if(document.querySelector("tr input") != null) return;
 		let out;
 		get(data => {
 			data = JSON.parse(data);
 			out  = `
 				<td>N</td>
-				<td>N</td>
-				<td><input type="text" placeholder="Название компании" value="${data.data.name}"></td></td>
-				<td><input type="number" placeholder="ИНН" value="${data.data.inn}"></td></td>
-				<td><input type="text" placeholder="Генеральный директор" value="${data.data.ceo}"></td></td>
-				<td><input type="text" placeholder="Контактный телефон" value="${data.data.contact_phone}"></td></td>
-				<td><input type="button" value="Изменить" onclick="supplier_update(${data.data.supplier_id})"></td></td>
-				<td>N</td>
+				<td>${data.data.supplier_id}</td>
+				<td><input type="text" placeholder="Название компании" value="${data.data.name}"></td>
+				<td><input type="number" placeholder="ИНН" value="${data.data.inn}"></td>
+				<td><input type="text" placeholder="Генеральный директор" value="${data.data.ceo}"></td>
+				<td><input type="text" placeholder="Контактный телефон" value="${data.data.contact_phone}"></td>
+				<td><input type="button" value="Изменить" onclick="supplier_update(${data.data.supplier_id})"></td>
+				<td><a onclick="supplier_delete(${data.data.supplier_id})">Удалить</a></td>
 			`;
 			$("#tr_"+id).html(out);
 		}, null, "api/supplier/get?supplier_id="+id);
@@ -54,9 +54,8 @@
 		let out = ``, name = ``;
 		get(data => {
 			data = JSON.parse(data);
-			if(data.data.length == 0) {
-				out = `<p>Поставщики отсутствуют</p>`;
-			} else {
+			if(data.data.length == 0) out = `<p>Поставщики отсутствуют</p>`;
+			else {
 				out = `
 					<table>
 						<tr>

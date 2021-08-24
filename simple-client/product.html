@@ -19,8 +19,8 @@
 </div><br>
 
 <script>
-	category_out("#category_id", "#supplier_id", true);
-	function category_out(elem, elem2, state) {
+	directory_out("#category_id", "#supplier_id", true);
+	function directory_out(elem, elem2, state) {
 		let out = ``, name = ``;
 		get(data => {
 			data = JSON.parse(data);
@@ -30,21 +30,18 @@
 				out += `<option value="${category.category_id}">${name}</option>`
 			});
 			$(elem).append(out);
-			supplier_out(elem2, state);
+			out = ``; name = ``;
+			get(data => {
+				data = JSON.parse(data);
+				data.data.forEach(supplier => {
+					if(supplier.name == "") name = "*Поставщик с пустым названием*";
+					else name = supplier.name;
+					out += `<option value="${supplier.supplier_id}">${name}</option>`
+				});
+				$(elem2).append(out);
+				if(state) product_get_all();
+			}, null, "api/supplier/get_all");
 		}, null, "api/category/get_all");
-	}
-	function supplier_out(elem, state) {
-		let out = ``, name = ``;
-		get(data => {
-			data = JSON.parse(data);
-			data.data.forEach(supplier => {
-				if(supplier.name == "") name = "*Поставщик с пустым названием*";
-				else name = supplier.name;
-				out += `<option value="${supplier.supplier_id}">${name}</option>`
-			});
-			$(elem).append(out);
-			if(state) product_get_all();
-		}, null, "api/supplier/get_all");
 	}
 
 	function product_add() {
@@ -65,14 +62,14 @@
 	}
 
 	function product_get(id) {
-		if(document.querySelector("#tr_"+id+" input") != null) return;
+		if(document.querySelector("tr input") != null) return;
 		let out;
 		get(data => {
 			data = JSON.parse(data);
 			let product = data.data; 
 			out = `
 				<td>N</td>
-				<td>N</td>
+				<td>${product.product_id}</td>
 				<td><select id="supplier_id_update"><option value="${product.supplier.supplier_id}" selected>${product.supplier.name}</option></select></td>
 				<td><input type="text" value="${product.name}" placeholder="Название товара"></td>
 				<td><input type="text" value="${product.material}" placeholder="Материал"></td>
@@ -80,10 +77,10 @@
 				<td><input type="number" value="${product.cost}" placeholder="Стоимость"></td>
 				<td><input type="number" value="${product.number}" placeholder="Количество"></td>
 				<td><input type="button" value="Изменить" onclick="product_update(${product.product_id})"></td></td>
-				<td>N</td>
+				<td><a onclick="product_delete(${product.product_id})">Удалить</a></td>
 			`;
 			$("#tr_"+id).html(out);
-			category_out("#category_id_update", "#supplier_id_update", false);
+			directory_out("#category_id_update", "#supplier_id_update", false);
 		}, null, "api/product/get?product_id="+id);
 	}
 
@@ -91,9 +88,8 @@
 		let out = ``, name = ``;
 		get(data => {
 			data = JSON.parse(data);
-			if(data.data.length == 0) {
-				out = `<p>Товары отсутствуют</p>`;
-			} else {
+			if(data.data.length == 0) out = `<p>Товары отсутствуют</p>`;
+			else {
 				out = `
 					<table>
 						<tr>

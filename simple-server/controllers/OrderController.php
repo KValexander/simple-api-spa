@@ -4,7 +4,7 @@ class OrderController {
 		$query = sprintf("SELECT * FROM `product` WHERE `product_id`='%s'", Request::input("product_id"));
 		$product = DB::query($query)->fetch_assoc();
 		if($product === null) return response(400, "Такого товара нет");
-		$cost = $product["cost"] * Request::input("count");
+		$cost = (int)$product["cost"] * (int)Request::input("count");
 		$query = sprintf("INSERT INTO `order`(`product_id`, `client_id`, `count`, `cost`) VALUE ('%s', '%s', '%s', '%s')",
 			Request::input("product_id"),
 			Request::input("client_id"),
@@ -52,12 +52,16 @@ class OrderController {
 	}
 
 	public function update() {
+		$query = sprintf("SELECT * FROM `product` WHERE `product_id`='%s'", Request::input("product_id"));
+		$product = DB::query($query)->fetch_assoc();
+		if($product === null) return response(400, "Такого товара нет");
+		$cost = (int)$product["cost"] * (int)Request::input("count");
 		$query = sprintf("UPDATE `order` SET `product_id`='%s', `client_id`='%s', `count`='%s', `cost`='%s' WHERE `order_id`='%s'",
 			Request::input("product_id"),
 			Request::input("client_id"),
 			Request::input("count"),
-			Request::input("cost"),
-			Request::input("order_id"),
+			$cost,
+			Request::input("order_id")
 		);
 		if(DB::query($query)) return response(200, "Заказ успешно обновлен");
 		else return response(400, "Ошибка обновления данных: ". DB::$connect->error);
