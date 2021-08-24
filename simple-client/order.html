@@ -52,6 +52,7 @@
 			data = JSON.parse(data);
 			alert(data.status + " " + data.data);
 			order_get_all();
+			$("input[type=number]").val("");
 		}, data, "api/order/add");
 	}
 
@@ -117,9 +118,8 @@
 							<td><a onclick="order_delete(${order.order_id})">Удалить</a></td>
 						</tr>
 					`;
-					out += `</table>`;
-					$("#orders").html(out);
 				});
+				out += `</table>`;
 			}
 			$("#orders").html(out);
 		}, null, "api/order/get_all");

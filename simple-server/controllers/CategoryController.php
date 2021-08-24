@@ -26,8 +26,8 @@ class CategoryController {
 
 	public function update() {
 		$query = sprintf("UPDATE `category` SET `category`='%s' WHERE `category_id`='%s'",
-			Request::input("category_id"),
-			Request::input("category")
+			Request::input("category"),
+			Request::input("category_id")
 		);
 		if(DB::query($query)) return response(200, "Категория успешно обновлена");
 		else return response(400, "Ошибка обновления данных: ". DB::$connect->error);

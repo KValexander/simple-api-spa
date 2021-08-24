@@ -27,6 +27,8 @@
 			data = JSON.parse(data);
 			alert(data.status + " " + data.data);
 			supplier_get_all();
+			input.forEach(data => data.value = "");
+			document.querySelector("input[type=button]").value = "Добавить";
 		}, data, "api/supplier/add");
 	}
 
