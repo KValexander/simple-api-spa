@@ -1,4 +1,7 @@
 <?php
+use App\Request\Request;
+use App\Database\DB;
+
 class ClientController {
 	public function add() {
 		$query = sprintf("INSERT INTO `client`(`surname`, `name`, `patronymic`, `email`, `phone`) VALUE ('%s', '%s', '%s', '%s', '%s')",

@@ -1,4 +1,6 @@
 <?php
+	use App\Route\Route;
+
 	Route::get("/api/start", "StartController@start");
 
 	// Category

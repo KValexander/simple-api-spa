@@ -1,4 +1,6 @@
 <?php
+namespace App\Route;
+
 class Route {
 	private static $routes = array();
 	private static $type;
@@ -24,25 +26,10 @@ class Route {
 	public static function call() {
 		// Getting route value
 		$route = self::$routes[self::$type][self::$route];
-
 		// Retrieving parameters
 		$params = explode("@", $route);
-
-		// Getting and checking a class and controller
-		include "controllers/". $params[0] .".php";
-		if(!class_exists($params[0], false))
-			exit("Class $params[0] not found");
-
-		$controller = new $params[0];
-
-		// Getting and checking a method
-		if(!method_exists($controller, $params[1]))
-			exit("Method $params[1] not found");
-
-		$method = (string)$params[1];
-
-		// Method call
-		return $controller->$method();
+		// Controller call
+		return controller($params);
 	}
 
 	public static function search() {

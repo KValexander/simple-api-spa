@@ -102,10 +102,12 @@
 			if(data.data.length == 0) out = `<p>Заказы отсутствуют</p>`;
 			else {
 				data.data.forEach((order, i) => {
-					product = order.product.name;
-					if(product == "") product = "*Товар с пустым названием*";
-					client = order.client.surname + " " + order.client.name + " " + order.client.patronymic;
-					if(client == "") client = "*ФИО с пустым названием*";
+					if(order.product.name != null) product = order.product.name;
+					else if(order.product.name == "") product = "*Товар с пустым названием*";
+					else product = null;
+					if(order.client != null) client = order.client.surname + " " + order.client.name + " " + order.client.patronymic;
+					else if(order.client == "") client = "*ФИО с пустым названием*";
+					else client = null;
 					out += `
 						<tr id="tr_${order.order_id}">
 							<td>${i}</td>

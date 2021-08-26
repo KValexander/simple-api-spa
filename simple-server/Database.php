@@ -1,4 +1,6 @@
 <?php
+namespace App\Database;
+
 class DB {
 	// Data for connecting to the base
 	private static $dbhost = "localhost";
@@ -10,7 +12,7 @@ class DB {
 	// Connection to base
 	public static function connect() {
 		self::$connect = null;
-		self::$connect = new mysqli(self::$dbhost, self::$dbuser, self::$dbpass, self::$dbname);
+		self::$connect = new \mysqli(self::$dbhost, self::$dbuser, self::$dbpass, self::$dbname);
 		self::$connect->set_charset("utf8");
 		if(self::$connect->connect_errno)
 			die("Connection error: ". self::$connect->connect_errno);

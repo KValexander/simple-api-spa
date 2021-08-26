@@ -87,7 +87,7 @@
 	}
 
 	function product_get_all() {
-		let out = ``, name = ``;
+		let out = ``, name = ``, supplier;
 		get(data => {
 			data = JSON.parse(data);
 			if(data.data.length == 0) out = `<p>Товары отсутствуют</p>`;
@@ -110,11 +110,14 @@
 				data.data.forEach((product, i) => {
 					if (product.name == "") name = "*Товар с пустым названием*";
 					else name = product.name;
+					if(product.supplier != null) supplier = product.supplier.name;
+					else if(product.supplier == "") supplier = "*Поставщик с пустым названием*";
+					else supplier = "null";
 					out += `
 						<tr id="tr_${product.product_id}">
 							<td>${i}</td>
 							<td>${product.product_id}</td>
-							<td>${product.supplier.name}</td>
+							<td>${supplier}</td>
 							<td>${name}</td>
 							<td>${product.material}</td>
 							<td>${product.category}</td>

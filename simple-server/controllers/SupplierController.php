@@ -1,4 +1,7 @@
 <?php
+use App\Request\Request;
+use App\Database\DB;
+
 class SupplierController {
 
 	public function add() {

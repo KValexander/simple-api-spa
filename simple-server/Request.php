@@ -1,4 +1,6 @@
 <?php
+namespace App\Request;
+
 class Request {
 	// Returns all data
 	public static function all() {

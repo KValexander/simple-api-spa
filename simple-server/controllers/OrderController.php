@@ -1,4 +1,7 @@
 <?php
+use App\Request\Request;
+use App\Database\DB;
+
 class OrderController {
 	public function add() {
 		$query = sprintf("SELECT * FROM `product` WHERE `product_id`='%s'", Request::input("product_id"));

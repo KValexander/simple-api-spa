@@ -1,13 +1,15 @@
 <?php
 	session_start();
-	
+
 	include "Database.php";
 	include "Request.php";
 	include "Route.php";
 	
-	include "response.php";
+	include "common.php";
 	include "routes.php";
 
+	use App\Route\Route;
+	use App\Database\DB;
 	DB::connect();
 
 	header("Access-Control-Allow-Origin: *");
